@@ -2,409 +2,260 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Générateur de signatures — Dinamicom</title>
-<style>
-:root{--navy:#241F55;--violet:#A56DFF;--blue:#1300FF;--red:#FF3347;--lime:#C6E83C;--light:#F4F2FF;--border:#E0D9FF;--font:'Segoe UI',Arial,sans-serif;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--font);background:var(--light);color:var(--navy);min-height:100vh;}
-header{background:var(--navy);padding:16px 28px;display:flex;align-items:center;gap:12px;}
-header .logo{width:34px;height:34px;background:var(--violet);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:#fff;}
-header h1{color:#fff;font-size:17px;font-weight:600;}
-header h1 span{color:var(--violet);}
-.profiles-bar{background:#fff;border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.profiles-bar .lbl{font-size:12px;color:#888;margin-right:4px;}
-.chip{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--border);background:#fff;cursor:pointer;color:var(--navy);transition:all .15s;}
-.chip:hover{border-color:var(--violet);color:var(--violet);}
-.chip.active{background:var(--navy);color:#fff;border-color:var(--navy);}
-.chip.del{background:#fff0f1;color:var(--red);border-color:#ffc0c5;font-size:11px;padding:4px 8px;}
-.chip.add{background:var(--light);color:var(--violet);border-style:dashed;}
-.layout{display:grid;grid-template-columns:310px 1fr;min-height:calc(100vh - 96px);}
-.sidebar{background:#fff;border-right:1px solid var(--border);overflow-y:auto;padding-bottom:40px;}
-.sec{padding:16px 18px 4px;}
-.sec-title{font-size:11px;font-weight:700;letter-spacing:.09em;color:var(--violet);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px;}
-label{font-size:12.5px;color:#555;display:block;margin-bottom:3px;font-weight:500;}
-input[type=text],input[type=email],input[type=tel],input[type=url],textarea{width:100%;padding:7px 9px;font-size:12.5px;border:1px solid var(--border);border-radius:7px;font-family:var(--font);color:var(--navy);background:#FAFAFE;margin-bottom:8px;transition:border-color .15s;}
-input:focus,textarea:focus{outline:none;border-color:var(--violet);background:#fff;}
-textarea{resize:vertical;min-height:52px;}
-hr.sep{border:none;border-top:1px solid var(--border);margin:4px 0 12px;}
-.toggle-group{display:flex;flex-direction:column;gap:7px;}
-.trow{display:flex;align-items:center;justify-content:space-between;}
-.trow label{margin:0;}
-.tog{position:relative;width:38px;height:21px;flex-shrink:0;}
-.tog input{opacity:0;width:0;height:0;}
-.tog-s{position:absolute;inset:0;background:#D0CCEE;border-radius:21px;cursor:pointer;transition:background .2s;}
-.tog input:checked+.tog-s{background:var(--violet);}
-.tog-s::before{content:'';position:absolute;width:15px;height:15px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;}
-.tog input:checked+.tog-s::before{transform:translateX(17px);}
-.color-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
-.cf label{font-size:11.5px;margin-bottom:3px;}
-.crow{display:flex;align-items:center;gap:6px;}
-input[type=color]{width:30px;height:30px;border-radius:6px;border:1px solid var(--border);padding:2px;cursor:pointer;background:#fff;}
-.chex{flex:1;font-size:11px;font-family:monospace;padding:5px 7px;border:1px solid var(--border);border-radius:6px;background:#FAFAFE;color:var(--navy);margin-bottom:0;}
-.presets{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;}
-.preset-btn{padding:5px 10px;border-radius:6px;font-size:11.5px;font-weight:600;border:1px solid var(--border);background:#fff;cursor:pointer;color:var(--navy);font-family:var(--font);transition:all .15s;}
-.preset-btn:hover{border-color:var(--violet);color:var(--violet);}
-.photo-wrap{display:flex;flex-direction:column;align-items:center;gap:7px;padding:8px 0;}
-.photo-ring{width:78px;height:78px;border-radius:50%;border:2.5px solid var(--violet);overflow:hidden;background:var(--light);display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.photo-ring img{width:100%;height:100%;object-fit:cover;display:none;}
-.btn-up{font-size:11.5px;color:var(--violet);background:var(--light);border:1px solid var(--border);border-radius:6px;padding:5px 12px;cursor:pointer;font-family:var(--font);font-weight:600;}
-.btn-up:hover{background:#E8E0FF;}
-#photo-input{display:none;}
-.main{padding:24px;overflow-y:auto;}
-.main-title{font-size:11px;font-weight:700;letter-spacing:.09em;color:var(--violet);text-transform:uppercase;margin-bottom:12px;}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
-.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;border:none;display:flex;align-items:center;gap:6px;transition:opacity .15s,transform .1s;}
-.btn:hover{opacity:.87;}
-.btn:active{transform:scale(.97);}
-.btn-p{background:var(--navy);color:#fff;}
-.btn-s{background:var(--violet);color:#fff;}
-.btn-a{background:var(--lime);color:var(--navy);}
-.btn-g{background:#fff;color:var(--navy);border:1px solid var(--border);}
-.btn.ok{background:#22c55e!important;}
-.preview-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:24px;margin-bottom:16px;overflow-x:auto;}
-.html-box textarea{width:100%;height:130px;font-size:11px;font-family:'Courier New',monospace;background:#F8F7FF;border:1px solid var(--border);border-radius:8px;padding:10px;color:#333;resize:vertical;margin-bottom:6px;}
-.hint{font-size:11.5px;color:#888;margin-top:6px;}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;transform:translateY(70px);opacity:0;transition:all .3s;z-index:999;pointer-events:none;}
-.toast.show{transform:translateY(0);opacity:1;}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Signatures Dinamicom</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}
+:root{--v:#A56DFF;--n:#241F55;--b:#F4F2FF;--e:#E0D9FF;--f:'Segoe UI',Arial,sans-serif}
+body{font-family:var(--f);background:var(--b);color:var(--n)}
+header{background:var(--n);padding:14px 24px;display:flex;align-items:center;gap:10px}
+header b{color:#fff;font-size:16px}
+.logo{background:var(--v);color:#fff;width:32px;height:32px;border-radius:7px;display:grid;place-items:center;font-weight:900;font-size:16px}
+.bar{background:#fff;border-bottom:1px solid var(--e);padding:7px 16px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:12px;color:#888}
+.chip{padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--e);background:#fff;cursor:pointer;color:var(--n)}
+.chip:hover,.chip.add{color:var(--v);border-color:var(--v)}
+.chip.add{border-style:dashed;background:var(--b)}
+.chip.on{background:var(--n);color:#fff;border-color:var(--n)}
+.chip.del{color:#FF3347;border-color:#ffc0c5;background:#fff0f1}
+.wrap{display:grid;grid-template-columns:290px 1fr;min-height:calc(100vh - 88px)}
+aside{background:#fff;border-right:1px solid var(--e);overflow-y:auto;padding-bottom:32px}
+.sec{padding:14px 16px 2px}
+.st{font-size:10.5px;font-weight:700;letter-spacing:.09em;color:var(--v);text-transform:uppercase;margin-bottom:8px}
+label{font-size:12px;color:#555;display:block;margin-bottom:2px;font-weight:500}
+input[type=text],input[type=email],input[type=tel],input[type=url],textarea{width:100%;padding:6px 8px;font-size:12px;border:1px solid var(--e);border-radius:6px;font-family:var(--f);color:var(--n);background:#fafafe;margin-bottom:7px}
+input:focus,textarea:focus{outline:none;border-color:var(--v)}
+textarea{resize:vertical;min-height:46px}
+hr{border:none;border-top:1px solid var(--e);margin:4px 0 10px}
+.tg{display:flex;flex-direction:column;gap:6px}
+.tr{display:flex;align-items:center;justify-content:space-between}
+.tr label{margin:0}
+.sw{position:relative;width:36px;height:20px;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0}
+.sl{position:absolute;inset:0;background:#ccc;border-radius:20px;cursor:pointer;transition:.2s}
+.sw input:checked+.sl{background:var(--v)}
+.sl:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+.sl:before{transform:translateX(16px)}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.cf label{font-size:11px;margin-bottom:3px}
+.cr{display:flex;align-items:center;gap:5px}
+input[type=color]{width:28px;height:28px;border-radius:5px;border:1px solid var(--e);padding:2px;cursor:pointer}
+.ch{flex:1;font-size:11px;font-family:monospace;padding:4px 6px;border:1px solid var(--e);border-radius:5px;background:#fafafe;color:var(--n);margin-bottom:0}
+.ps{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
+.pb{padding:4px 9px;border-radius:5px;font-size:11px;font-weight:600;border:1px solid var(--e);background:#fff;cursor:pointer;font-family:var(--f);color:var(--n)}
+.pb:hover{color:var(--v);border-color:var(--v)}
+.pw{display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0}
+.pr{width:72px;height:72px;border-radius:50%;border:2px solid var(--v);overflow:hidden;background:var(--b);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.pr img{width:100%;height:100%;object-fit:cover;display:none}
+.pu{font-size:11px;color:var(--v);background:var(--b);border:1px solid var(--e);border-radius:5px;padding:4px 10px;cursor:pointer;font-family:var(--f);font-weight:600}
+main{padding:20px;overflow-y:auto}
+.mt{font-size:10.5px;font-weight:700;letter-spacing:.09em;color:var(--v);text-transform:uppercase;margin-bottom:10px}
+.ac{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.btn{padding:8px 15px;border-radius:7px;font-size:12.5px;font-weight:600;font-family:var(--f);cursor:pointer;border:none;transition:opacity .15s}
+.btn:hover{opacity:.85}
+.bp{background:var(--n);color:#fff}.bs{background:var(--v);color:#fff}
+.ba{background:#C6E83C;color:var(--n)}.bg2{background:#fff;color:var(--n);border:1px solid var(--e)}
+.btn.ok{background:#22c55e!important;color:#fff}
+.pc{background:#fff;border-radius:10px;border:1px solid var(--e);padding:20px;margin-bottom:14px;overflow-x:auto}
+.hb textarea{width:100%;height:110px;font-size:11px;font-family:'Courier New',monospace;background:#f8f7ff;border:1px solid var(--e);border-radius:7px;padding:8px;color:#333;resize:vertical}
+.hint{font-size:11px;color:#999;margin-top:5px}
+.toast{position:fixed;bottom:16px;right:16px;background:var(--n);color:#fff;padding:9px 16px;border-radius:7px;font-size:12.5px;font-weight:600;transform:translateY(60px);opacity:0;transition:.3s;z-index:99;pointer-events:none}
+.toast.on{transform:translateY(0);opacity:1}</style>
 </head>
 <body>
-
-<header>
-  <div class="logo">D</div>
-  <h1>Générateur de signatures <span>— Dinamicom</span></h1>
-</header>
-
-<div class="profiles-bar" id="profiles-bar"><span class="lbl">Profils :</span></div>
-
-<div class="layout">
-<aside class="sidebar">
-
-  <div class="sec">
-    <div class="sec-title">Photo de profil</div>
-    <div class="photo-wrap">
-      <div class="photo-ring" id="photo-preview" onclick="document.getElementById('photo-input').click()">
-        <img id="photo-img" src="" alt="">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#A56DFF" stroke-width="1.5" id="photo-placeholder"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+<header><div class="logo">D</div><b>Signatures &mdash; <span style="color:var(--v)">Dinamicom</span></b></header>
+<div class="bar" id="bar"><span>Profils :</span></div>
+<div class="wrap">
+<aside>
+  <div class="sec"><div class="st">Photo</div>
+    <div class="pw">
+      <div class="pr" id="pr" onclick="document.getElementById('fi').click()">
+        <img id="pi" src="" alt="">
+        <svg id="pp" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A56DFF" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       </div>
-      <button class="btn-up" onclick="document.getElementById('photo-input').click()">Choisir une photo</button>
-      <input type="file" id="photo-input" accept="image/*">
+      <button class="pu" onclick="document.getElementById('fi').click()">Choisir une photo</button>
+      <input type="file" id="fi" accept="image/*" style="display:none">
     </div>
   </div>
-  <hr class="sep">
-
-  <div class="sec">
-    <div class="sec-title">Identité</div>
-    <label>Prénom</label><input type="text" id="fn" value="Chloé" oninput="render()">
-    <label>Nom</label><input type="text" id="ln" value="Jacqueline" oninput="render()">
-    <label>Titre / Rôle</label><textarea id="role" oninput="render()">Fondatrice
-de l'agence Dinamicom</textarea>
+  <hr>
+  <div class="sec"><div class="st">Identit&#233;</div>
+    <label>Pr&#233;nom</label><input type="text" id="fn" value="Chlo&#233;" oninput="R()">
+    <label>Nom</label><input type="text" id="ln" value="Jacqueline" oninput="R()">
+    <label>Titre</label><textarea id="ro" oninput="R()">Fondatrice de l&#39;agence Dinamicom</textarea>
   </div>
-
-  <div class="sec">
-    <div class="sec-title">Contact</div>
-    <label>Email</label><input type="email" id="email" value="chloe@dinamicom.fr" oninput="render()">
-    <label>Téléphone fixe</label><input type="tel" id="phone" value="02 31 64 09 25" oninput="render()">
-    <label>Téléphone mobile</label><input type="tel" id="mobile" value="06 07 05 53 41" oninput="render()">
-    <label>Adresse</label><input type="text" id="addr" value="13 Route de Rouen, 14130 Pont-L'Évêque" oninput="render()">
-    <label>Site web</label><input type="text" id="web" value="dinamicom.fr" oninput="render()">
+  <div class="sec"><div class="st">Contact</div>
+    <label>Email</label><input type="email" id="em" value="chloe@dinamicom.fr" oninput="R()">
+    <label>T&#233;l. fixe</label><input type="tel" id="ph" value="02 31 64 09 25" oninput="R()">
+    <label>Mobile</label><input type="tel" id="mo" value="06 07 05 53 41" oninput="R()">
+    <label>Adresse</label><input type="text" id="ad" value="13 Route de Rouen, 14130 Pont-L&#39;&#201;v&#234;que" oninput="R()">
+    <label>Site web</label><input type="text" id="we" value="dinamicom.fr" oninput="R()">
   </div>
-
-  <div class="sec">
-    <div class="sec-title">Réseaux sociaux</div>
-    <label>Facebook (URL)</label><input type="url" id="fb" value="https://facebook.com/dinamicom" oninput="render()">
-    <label>LinkedIn (URL)</label><input type="url" id="li" value="https://linkedin.com/company/dinamicom" oninput="render()">
-    <label>Instagram (URL)</label><input type="url" id="ig" value="https://instagram.com/dinamicom" oninput="render()">
+  <div class="sec"><div class="st">R&#233;seaux</div>
+    <label>Facebook</label><input type="url" id="fb" value="https://facebook.com/dinamicom" oninput="R()">
+    <label>LinkedIn</label><input type="url" id="li" value="https://linkedin.com/company/dinamicom" oninput="R()">
+    <label>Instagram</label><input type="url" id="ig" value="https://instagram.com/dinamicom" oninput="R()">
   </div>
-
-  <div class="sec">
-    <div class="sec-title">Affichage</div>
-    <div class="toggle-group">
-      <div class="trow"><label>Téléphone fixe</label><label class="tog"><input type="checkbox" id="s_phone" checked oninput="render()"><span class="tog-s"></span></label></div>
-      <div class="trow"><label>Téléphone mobile</label><label class="tog"><input type="checkbox" id="s_mobile" checked oninput="render()"><span class="tog-s"></span></label></div>
-      <div class="trow"><label>Adresse</label><label class="tog"><input type="checkbox" id="s_addr" checked oninput="render()"><span class="tog-s"></span></label></div>
-      <div class="trow"><label>Site web</label><label class="tog"><input type="checkbox" id="s_web" checked oninput="render()"><span class="tog-s"></span></label></div>
-      <div class="trow"><label>Réseaux sociaux</label><label class="tog"><input type="checkbox" id="s_social" checked oninput="render()"><span class="tog-s"></span></label></div>
-      <div class="trow"><label>Photo</label><label class="tog"><input type="checkbox" id="s_photo" checked oninput="render()"><span class="tog-s"></span></label></div>
-      <div class="trow"><label>Bannière latérale</label><label class="tog"><input type="checkbox" id="s_banner" checked oninput="render()"><span class="tog-s"></span></label></div>
+  <div class="sec"><div class="st">Affichage</div>
+    <div class="tg">
+      <div class="tr"><label>T&#233;l. fixe</label><label class="sw"><input type="checkbox" id="sp" checked oninput="R()"><span class="sl"></span></label></div>
+      <div class="tr"><label>Mobile</label><label class="sw"><input type="checkbox" id="sm" checked oninput="R()"><span class="sl"></span></label></div>
+      <div class="tr"><label>Adresse</label><label class="sw"><input type="checkbox" id="sa" checked oninput="R()"><span class="sl"></span></label></div>
+      <div class="tr"><label>Site web</label><label class="sw"><input type="checkbox" id="sw2" checked oninput="R()"><span class="sl"></span></label></div>
+      <div class="tr"><label>R&#233;seaux</label><label class="sw"><input type="checkbox" id="ss" checked oninput="R()"><span class="sl"></span></label></div>
+      <div class="tr"><label>Photo</label><label class="sw"><input type="checkbox" id="sph" checked oninput="R()"><span class="sl"></span></label></div>
+      <div class="tr"><label>Banni&#232;re</label><label class="sw"><input type="checkbox" id="sb" checked oninput="R()"><span class="sl"></span></label></div>
     </div>
   </div>
-
-  <div class="sec" style="margin-top:12px;">
-    <div class="sec-title">Couleurs</div>
-    <div class="color-grid">
-      <div class="cf"><label>Fond gauche</label><div class="crow"><input type="color" id="c_bg" value="#F3F0FF" oninput="sc('c_bg','h_bg')"><input type="text" class="chex" id="h_bg" value="#F3F0FF" oninput="sh('h_bg','c_bg')" maxlength="7"></div></div>
-      <div class="cf"><label>Nom</label><div class="crow"><input type="color" id="c_name" value="#A56DFF" oninput="sc('c_name','h_name')"><input type="text" class="chex" id="h_name" value="#A56DFF" oninput="sh('h_name','c_name')" maxlength="7"></div></div>
-      <div class="cf"><label>Icônes &amp; liens</label><div class="crow"><input type="color" id="c_accent" value="#A56DFF" oninput="sc('c_accent','h_accent')"><input type="text" class="chex" id="h_accent" value="#A56DFF" oninput="sh('h_accent','c_accent')" maxlength="7"></div></div>
-      <div class="cf"><label>Bannière droite</label><div class="crow"><input type="color" id="c_banner" value="#C4A8FF" oninput="sc('c_banner','h_banner')"><input type="text" class="chex" id="h_banner" value="#C4A8FF" oninput="sh('h_banner','c_banner')" maxlength="7"></div></div>
-      <div class="cf"><label>Fond réseaux</label><div class="crow"><input type="color" id="c_social_bg" value="#A56DFF" oninput="sc('c_social_bg','h_social_bg')"><input type="text" class="chex" id="h_social_bg" value="#A56DFF" oninput="sh('h_social_bg','c_social_bg')" maxlength="7"></div></div>
-      <div class="cf"><label>Icône réseaux</label><div class="crow"><input type="color" id="c_social_ic" value="#FFFFFF" oninput="sc('c_social_ic','h_social_ic')"><input type="text" class="chex" id="h_social_ic" value="#FFFFFF" oninput="sh('h_social_ic','c_social_ic')" maxlength="7"></div></div>
+  <div class="sec" style="margin-top:10px"><div class="st">Couleurs</div>
+    <div class="cgrid">
+      <div class="cf"><label>Fond gauche</label><div class="cr"><input type="color" id="cbg" value="#F3F0FF" oninput="sc('cbg','hbg')"><input class="ch" id="hbg" value="#F3F0FF" oninput="sh('hbg','cbg')" maxlength="7"></div></div>
+      <div class="cf"><label>Nom</label><div class="cr"><input type="color" id="cnm" value="#A56DFF" oninput="sc('cnm','hnm')"><input class="ch" id="hnm" value="#A56DFF" oninput="sh('hnm','cnm')" maxlength="7"></div></div>
+      <div class="cf"><label>Ic&#244;nes</label><div class="cr"><input type="color" id="cac" value="#A56DFF" oninput="sc('cac','hac')"><input class="ch" id="hac" value="#A56DFF" oninput="sh('hac','cac')" maxlength="7"></div></div>
+      <div class="cf"><label>Banni&#232;re</label><div class="cr"><input type="color" id="cbn" value="#C4A8FF" oninput="sc('cbn','hbn')"><input class="ch" id="hbn" value="#C4A8FF" oninput="sh('hbn','cbn')" maxlength="7"></div></div>
+      <div class="cf"><label>Fond r&#233;seaux</label><div class="cr"><input type="color" id="csb" value="#A56DFF" oninput="sc('csb','hsb')"><input class="ch" id="hsb" value="#A56DFF" oninput="sh('hsb','csb')" maxlength="7"></div></div>
+      <div class="cf"><label>Ic&#244;ne r&#233;seaux</label><div class="cr"><input type="color" id="csi" value="#FFFFFF" oninput="sc('csi','hsi')"><input class="ch" id="hsi" value="#FFFFFF" oninput="sh('hsi','csi')" maxlength="7"></div></div>
     </div>
-    <div class="presets">
-      <button class="preset-btn" onclick="preset('navy')">Navy</button>
-      <button class="preset-btn" onclick="preset('violet')">Violet</button>
-      <button class="preset-btn" onclick="preset('blue')">Bleu</button>
-      <button class="preset-btn" onclick="preset('red')">Rouge</button>
-      <button class="preset-btn" onclick="preset('lime')">Lime</button>
+    <div class="ps">
+      <button class="pb" onclick="P('navy')">Navy</button>
+      <button class="pb" onclick="P('violet')">Violet</button>
+      <button class="pb" onclick="P('blue')">Bleu</button>
+      <button class="pb" onclick="P('red')">Rouge</button>
+      <button class="pb" onclick="P('lime')">Lime</button>
     </div>
   </div>
-
 </aside>
-
-<main class="main">
-  <div class="main-title">Aperçu en temps réel</div>
-  <div class="actions">
-    <button class="btn btn-p" id="btn-copy" onclick="copyHTML()">Copier le HTML</button>
-    <button class="btn btn-s" onclick="saveProfile()">Enregistrer le profil</button>
-    <button class="btn btn-a" onclick="downloadHTML()">Télécharger .html</button>
-    <button class="btn btn-g" onclick="preset('navy')">Reset couleurs</button>
+<main>
+  <div class="mt">Aper&#231;u</div>
+  <div class="ac">
+    <button class="btn bp" id="bc" onclick="cpH()">Copier HTML</button>
+    <button class="btn bs" onclick="sP()">Enregistrer</button>
+    <button class="btn ba" onclick="dlH()">T&#233;l&#233;charger</button>
+    <button class="btn bg2" onclick="P('navy')">Reset</button>
   </div>
-  <div class="preview-card" id="sig-preview"></div>
-  <div class="main-title" style="margin-top:16px;">HTML à coller dans votre client mail</div>
-  <div class="html-box"><textarea id="html-out" readonly spellcheck="false"></textarea></div>
-  <p class="hint">Gmail : Paramètres → Signature. Outlook : Nouveau message → Signatures → Modifier les signatures (onglet HTML).</p>
+  <div class="pc" id="pv"></div>
+  <div class="mt" style="margin-top:14px">HTML &#224; coller dans votre client mail</div>
+  <div class="hb"><textarea id="ho" readonly spellcheck="false"></textarea></div>
+  <p class="hint">Gmail : Param&#232;tres &#8594; Signature &mdash; Outlook : Signatures &#8594; onglet HTML</p>
 </main>
 </div>
-
-<div class="toast" id="toast"><span id="toast-msg">Copié !</span></div>
-
-<script>
-let photoData='';
-let profiles={};
-let activeProfile='';
-
-const PRESETS={
-  navy:  {c_bg:'#F3F0FF',c_name:'#A56DFF',c_accent:'#A56DFF',c_banner:'#C4A8FF',c_social_bg:'#A56DFF',c_social_ic:'#FFFFFF'},
-  violet:{c_bg:'#EDE8FF',c_name:'#5B21B6',c_accent:'#5B21B6',c_banner:'#A56DFF',c_social_bg:'#5B21B6',c_social_ic:'#FFFFFF'},
-  blue:  {c_bg:'#EEF0FF',c_name:'#1300FF',c_accent:'#1300FF',c_banner:'#8890FF',c_social_bg:'#1300FF',c_social_ic:'#FFFFFF'},
-  red:   {c_bg:'#FFF0F1',c_name:'#FF3347',c_accent:'#FF3347',c_banner:'#FF8A94',c_social_bg:'#FF3347',c_social_ic:'#FFFFFF'},
-  lime:  {c_bg:'#F5FBDD',c_name:'#241F55',c_accent:'#241F55',c_banner:'#C6E83C',c_social_bg:'#C6E83C',c_social_ic:'#241F55'}
+<div class="toast" id="tst"><span id="tm"></span></div>
+<script>var photo='',profiles={},active='',curPreset='navy';
+var BASE='https://jsourbieu-creator.github.io/signature-dinamicom/icons';
+var PS={
+  navy:  {cbg:'#F3F0FF',cnm:'#A56DFF',cac:'#A56DFF',cbn:'#C4A8FF',csb:'#A56DFF',csi:'#FFFFFF'},
+  violet:{cbg:'#EDE8FF',cnm:'#5B21B6',cac:'#5B21B6',cbn:'#A56DFF',csb:'#5B21B6',csi:'#FFFFFF'},
+  blue:  {cbg:'#EEF0FF',cnm:'#1300FF',cac:'#1300FF',cbn:'#8890FF',csb:'#1300FF',csi:'#FFFFFF'},
+  red:   {cbg:'#FFF0F1',cnm:'#FF3347',cac:'#FF3347',cbn:'#FF8A94',csb:'#FF3347',csi:'#FFFFFF'},
+  lime:  {cbg:'#F5FBDD',cnm:'#241F55',cac:'#241F55',cbn:'#C6E83C',csb:'#C6E83C',csi:'#241F55'}
 };
-
 function g(id){return document.getElementById(id);}
-function val(id){return g(id)?g(id).value.trim():'';}
-function chk(id){return g(id)?g(id).checked:false;}
-function sc(cid,hid){if(g(hid))g(hid).value=g(cid).value;render();}
-function sh(hid,cid){const v=g(hid).value;if(/^#[0-9A-Fa-f]{6}$/.test(v)){g(cid).value=v;render();}}
-function preset(name){
-  const p=PRESETS[name];if(!p)return;
-  Object.entries(p).forEach(([k,v])=>{if(g(k))g(k).value=v;const h=k.replace('c_','h_');if(g(h))g(h).value=v;});
-  render();
+function v(id){var e=g(id);return e?e.value.trim():'';}
+function ck(id){var e=g(id);return e?e.checked:false;}
+function sc(a,b){var e=g(b);if(e)e.value=g(a).value;R();}
+function sh(a,b){var x=g(a).value;if(/^#[0-9A-Fa-f]{6}$/.test(x)){g(b).value=x;R();}}
+function P(name){
+  var p=PS[name];if(!p)return;curPreset=name;
+  var ks=['cbg','cnm','cac','cbn','csb','csi'];
+  for(var i=0;i<ks.length;i++){var k=ks[i];if(g(k))g(k).value=p[k];var h=k.replace('c','h');if(g(h))g(h).value=p[k];}
+  R();
 }
-
-/* ── SVG icons encoded as data URIs for email compatibility ── */
-function svgToDataURI(svg){
-  return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
+function iurl(name){return BASE+'/'+name+'-'+curPreset+'.png';}
+function icImg(key){
+  return '<img src="'+iurl(key)+'" width="28" height="28" style="display:inline-block;vertical-align:middle;margin-right:10px;" alt="">';
 }
-
-function makeIconCircle(svgPath, stroke, size=28){
-  return `<div style="width:${size}px;height:${size}px;border-radius:50%;border:1.5px solid ${stroke};display:inline-flex;align-items:center;justify-content:center;margin-right:9px;flex-shrink:0;vertical-align:middle;">`+
-    `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${svgPath}</svg></div>`;
+function socImg(href,key){
+  return '<a href="'+href+'" style="display:block;text-decoration:none;margin:3px 0;"><img src="'+iurl(key)+'" width="36" height="36" style="display:block;" alt=""></a>';
 }
-
-const PATHS={
-  envelope:'<rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/>',
-  phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.38 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 7.18 7.18l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
-  mobile:'<rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1" fill="currentColor"/>',
-  pin:'<path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
-  globe:'<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'
-};
-
-/* Social icons as filled SVG paths */
-const SOC_PATHS={
-  fb:'<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
-  li:'<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>',
-  ig:'<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>'
-};
-
-function makeSocialCircle(href, pathKey, bgColor, iconColor){
-  const isStroke = pathKey==='ig';
-  const svgInner = isStroke
-    ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SOC_PATHS[pathKey]}</svg>`
-    : `<svg width="16" height="16" viewBox="0 0 24 24" fill="${iconColor}" stroke="none">${SOC_PATHS[pathKey]}</svg>`;
-  return `<a href="${href}" style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:${bgColor};text-decoration:none;margin:3px 0;">${svgInner}</a>`;
+function row(key,content){
+  return '<tr><td style="padding:5px 0;vertical-align:middle;">'+icImg(key)+'</td>'
+    +'<td style="padding:5px 0;font-family:Arial,sans-serif;font-size:13px;vertical-align:middle;">'+content+'</td></tr>';
 }
-
+function lk(href,txt,col){
+  return '<a href="'+href+'" style="color:'+col+';text-decoration:underline;font-family:Arial,sans-serif;font-size:13px;">'+txt+'</a>';
+}
 function buildSig(){
-  const fn=val('fn'),ln=val('ln'),role=val('role');
-  const email=val('email'),phone=val('phone'),mobile=val('mobile');
-  const addr=val('addr'),web=val('web');
-  const fb=val('fb'),li=val('li'),ig=val('ig');
-  const bg=val('c_bg'),nameC=val('c_name'),acc=val('c_accent');
-  const bannerC=val('c_banner'),socBg=val('c_social_bg'),socIc=val('c_social_ic');
-  const initials=(fn.charAt(0)+ln.charAt(0)).toUpperCase();
-
-  function row(pathKey, content){
-    return `<tr><td style="padding:4px 0;vertical-align:middle;">
-      ${makeIconCircle(PATHS[pathKey], acc)}
-    </td><td style="padding:4px 0;font-family:Arial,sans-serif;font-size:13.5px;vertical-align:middle;color:#333;">${content}</td></tr>`;
+  var fn=v('fn'),ln=v('ln'),ro=v('ro');
+  var em=v('em'),ph=v('ph'),mo=v('mo'),ad=v('ad'),we=v('we');
+  var fbv=v('fb'),liv=v('li'),igv=v('ig');
+  var bg=v('cbg'),nm=v('cnm'),ac=v('cac'),bn=v('cbn');
+  var init=(fn.charAt(0)+ln.charAt(0)).toUpperCase();
+  var rows=row('email',lk('mailto:'+em,em,ac));
+  if(ck('sp')) rows+=row('phone', lk('tel:'+ph.split(' ').join(''),ph,ac));
+  if(ck('sm')) rows+=row('mobile',lk('tel:'+mo.split(' ').join(''),mo,ac));
+  if(ck('sa')) rows+=row('location','<span style="font-family:Arial,sans-serif;font-size:13px;color:#333;">'+ad+'</span>');
+  if(ck('sw2'))rows+=row('globe',  lk('https://'+we,we,ac));
+  var soc='';
+  if(ck('ss')){
+    soc='<div style="display:flex;flex-direction:column;align-items:center;padding:0 6px;">'
+      +socImg(fbv,'facebook')+socImg(liv,'linkedin')+socImg(igv,'instagram')+'</div>';
   }
-  const lnk=(href,txt)=>`<a href="${href}" style="color:${acc};text-decoration:underline;font-family:Arial,sans-serif;font-size:13.5px;">${txt}</a>`;
-
-  let rows='';
-  rows+=row('envelope', lnk(`mailto:${email}`,email));
-  if(chk('s_phone'))  rows+=row('phone',  lnk(`tel:${phone.replace(/\s/g,'')}`,phone));
-  if(chk('s_mobile')) rows+=row('mobile', lnk(`tel:${mobile.replace(/\s/g,'')}`,mobile));
-  if(chk('s_addr'))   rows+=row('pin',    `<span style="font-family:Arial,sans-serif;font-size:13.5px;">${addr}</span>`);
-  if(chk('s_web'))    rows+=row('globe',  lnk(`https://${web}`,web));
-
-  const photoHtml = chk('s_photo')
-    ? (photoData
-        ? `<img src="${photoData}" width="95" height="95" style="border-radius:50%;object-fit:cover;display:block;margin:0 auto 10px;" alt="${fn} ${ln}">`
-        : `<div style="width:95px;height:95px;border-radius:50%;background:#ddd6fe;display:inline-flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:28px;font-weight:700;color:${nameC};font-family:Arial;">${initials}</div>`)
-    : '';
-
-  const roleLines = role.replace(/\n/g,'<br>');
-
-  const leftCell=`<td style="padding:22px 16px 22px 20px;vertical-align:top;background:${bg};border-radius:10px 0 0 10px;text-align:center;min-width:150px;max-width:160px;">
-    <div style="text-align:center;">${photoHtml}</div>
-    <div style="font-family:Arial,sans-serif;font-size:24px;font-weight:700;color:${nameC};line-height:1.2;text-align:center;">${fn}<br>${ln}</div>
-    <div style="font-family:Arial,sans-serif;font-size:12px;color:#666;font-style:italic;margin-top:7px;text-align:center;line-height:1.55;">${roleLines}</div>
-  </td>`;
-
-  const contactCell=`<td style="padding:20px 20px;vertical-align:middle;background:#ffffff;">
-    <table cellpadding="0" cellspacing="0">${rows}</table>
-  </td>`;
-
-  const socialHtml = chk('s_social')
-    ? `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 4px;">
-        ${makeSocialCircle(fb,'fb',socBg,socIc)}
-        ${makeSocialCircle(li,'li',socBg,socIc)}
-        ${makeSocialCircle(ig,'ig',socBg,socIc)}
-      </div>` : '';
-
-  const bannerCell = chk('s_banner')
-    ? `<td style="width:52px;background:${bannerC};border-radius:0 10px 10px 0;vertical-align:middle;text-align:center;padding:12px 0;">${socialHtml}</td>`
-    : (chk('s_social')
-        ? `<td style="padding:16px 10px;vertical-align:middle;border-left:1px solid #f0ebff;">${socialHtml}</td>`
-        : '');
-
-  return `<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#ffffff;border-radius:10px;border:1px solid #E0D9FF;max-width:600px;font-family:Arial,sans-serif;">
-  <tr>${leftCell}${contactCell}${bannerCell}</tr>
-</table>`;
+  var pho='';
+  if(ck('sph')){
+    pho=photo
+      ?'<img src="'+photo+'" width="90" height="90" style="border-radius:50%;object-fit:cover;display:block;margin:0 auto 10px;" alt="'+fn+' '+ln+'">'
+      :'<div style="width:90px;height:90px;border-radius:50%;background:#ddd6fe;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:26px;font-weight:700;color:'+nm+';font-family:Arial;">'+init+'</div>';
+  }
+  var roHTML=ro.split('\n').join('<br>');
+  var bannerTd='';
+  if(ck('sb')){bannerTd='<td style="width:52px;background:'+bn+';border-radius:0 10px 10px 0;vertical-align:middle;text-align:center;">'+soc+'</td>';}
+  else if(ck('ss')){bannerTd='<td style="padding:14px 8px;vertical-align:middle;">'+soc+'</td>';}
+  return '<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;border-radius:10px;max-width:580px;">'
+    +'<tr>'
+    +'<td style="padding:20px 14px 20px 18px;background:'+bg+';border-radius:10px 0 0 10px;vertical-align:top;text-align:center;min-width:148px;">'
+    +pho
+    +'<div style="font-family:Arial,sans-serif;font-size:22px;font-weight:700;color:'+nm+';line-height:1.2;">'+fn+'<br>'+ln+'</div>'
+    +'<div style="font-family:Arial,sans-serif;font-size:12px;color:#666;font-style:italic;margin-top:7px;line-height:1.5;">'+roHTML+'</div>'
+    +'</td>'
+    +'<td style="padding:18px 18px;vertical-align:middle;background:#fff;"><table cellpadding="0" cellspacing="0">'+rows+'</table></td>'
+    +bannerTd+'</tr></table>';
 }
-
-function render(){
-  const html=buildSig();
-  g('sig-preview').innerHTML=html;
-  g('html-out').value=html;
+function R(){var h=buildSig();g('pv').innerHTML=h;g('ho').value=h;}
+function toast(msg){g('tm').textContent=msg;var t=g('tst');t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2200);}
+function cpH(){
+  var ta=g('ho');ta.select();document.execCommand('copy');toast('HTML copie !');
+  var b=g('bc');b.classList.add('ok');b.textContent='OK !';
+  setTimeout(function(){b.classList.remove('ok');b.textContent='Copier HTML';},2200);
 }
-
-function showToast(msg){
-  g('toast-msg').textContent=msg;
-  const t=g('toast');t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
+function dlH(){
+  var bl=new Blob([g('ho').value],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(bl);
+  a.download='signature-'+v('fn').toLowerCase()+'-'+v('ln').toLowerCase()+'.html';
+  a.click();toast('Telecharge !');
 }
-
-function copyHTML(){
-  const ta=g('html-out');ta.select();document.execCommand('copy');
-  showToast('HTML copié dans le presse-papiers !');
-  const b=g('btn-copy');b.classList.add('ok');b.textContent='✓ Copié !';
-  setTimeout(()=>{b.classList.remove('ok');b.textContent='Copier le HTML';},2500);
+var FDS=['fn','ln','ro','em','ph','mo','ad','we','fb','li','ig','cbg','cnm','cac','cbn','csb','csi','sp','sm','sa','sw2','ss','sph','sb'];
+function getFD(){var d={};for(var i=0;i<FDS.length;i++){var id=FDS[i];var e=g(id);if(e)d[id]=e.type==='checkbox'?e.checked:e.value;}d.photo=photo;d.preset=curPreset;return d;}
+function setFD(d){
+  for(var i=0;i<FDS.length;i++){var id=FDS[i];var e=g(id);if(!e)continue;if(e.type==='checkbox')e.checked=(d[id]!==false);else e.value=d[id]||'';if(id.charAt(0)==='c'){var h=id.replace('c','h');if(g(h))g(h).value=d[id]||'';}}
+  photo=d.photo||'';
+  if(photo){g('pi').src=photo;g('pi').style.display='block';g('pp').style.display='none';}
+  else{g('pi').style.display='none';g('pp').style.display='';}
+  curPreset=d.preset||'navy';
 }
-
-function downloadHTML(){
-  const blob=new Blob([g('html-out').value],{type:'text/html;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`signature-${val('fn').toLowerCase()}-${val('ln').toLowerCase()}.html`;
-  a.click();showToast('Fichier téléchargé !');
+function sP(){
+  var n=v('fn')+' '+v('ln');var k=n.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'')||'profil';
+  profiles[k]={label:n,data:getFD()};active=k;
+  try{localStorage.setItem('dp',JSON.stringify(profiles));}catch(e){}
+  rP();toast(n+' enregistre !');
 }
-
-function getFormData(){
-  const ids=['fn','ln','role','email','phone','mobile','addr','web','fb','li','ig',
-    'c_bg','c_name','c_accent','c_banner','c_social_bg','c_social_ic',
-    's_phone','s_mobile','s_addr','s_web','s_social','s_photo','s_banner'];
-  const d={};
-  ids.forEach(id=>{const el=g(id);if(el)d[id]=el.type==='checkbox'?el.checked:el.value;});
-  d.photo=photoData;return d;
-}
-
-function setFormData(d){
-  const ids=['fn','ln','role','email','phone','mobile','addr','web','fb','li','ig',
-    'c_bg','c_name','c_accent','c_banner','c_social_bg','c_social_ic',
-    's_phone','s_mobile','s_addr','s_web','s_social','s_photo','s_banner'];
-  ids.forEach(id=>{
-    const el=g(id);if(!el)return;
-    if(el.type==='checkbox')el.checked=d[id]!==false;
-    else el.value=d[id]||'';
-    const h=id.replace('c_','h_');
-    if(id.startsWith('c_')&&g(h))g(h).value=d[id]||'';
-  });
-  photoData=d.photo||'';
-  if(photoData){g('photo-img').src=photoData;g('photo-img').style.display='block';g('photo-placeholder').style.display='none';}
-  else{g('photo-img').style.display='none';g('photo-placeholder').style.display='';}
-}
-
-function saveProfile(){
-  const name=val('fn')+' '+val('ln');
-  const key=(name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'')||'profil');
-  profiles[key]={label:name,data:getFormData()};
-  activeProfile=key;
-  localStorage.setItem('dina_profiles',JSON.stringify(profiles));
-  renderProfiles();showToast(`Profil "${name}" enregistré !`);
-}
-
-function loadProfile(key){
-  if(!profiles[key])return;
-  activeProfile=key;setFormData(profiles[key].data);renderProfiles();render();
-}
-
-function deleteProfile(key){
-  delete profiles[key];localStorage.setItem('dina_profiles',JSON.stringify(profiles));
-  if(activeProfile===key){const k=Object.keys(profiles)[0];if(k)loadProfile(k);}
-  renderProfiles();
-}
-
-function renderProfiles(){
-  const bar=g('profiles-bar');
-  bar.innerHTML='<span class="lbl">Profils :</span>';
-  Object.entries(profiles).forEach(([key,p])=>{
-    const c=document.createElement('span');
-    c.className='chip'+(key===activeProfile?' active':'');
-    c.textContent=p.label;c.onclick=()=>loadProfile(key);bar.appendChild(c);
-    const d=document.createElement('span');
-    d.className='chip del';d.title='Supprimer';d.textContent='✕';
-    d.onclick=(e)=>{e.stopPropagation();if(confirm(`Supprimer "${p.label}" ?`))deleteProfile(key);};
-    bar.appendChild(d);
-  });
-  const nb=document.createElement('span');
-  nb.className='chip add';nb.textContent='+ Nouveau profil';
-  nb.onclick=()=>{
-    ['fn','ln','role','email','phone','mobile','addr','web'].forEach(id=>{if(g(id))g(id).value='';});
-    photoData='';g('photo-img').style.display='none';
-    if(g('photo-placeholder'))g('photo-placeholder').style.display='';
-    preset('navy');render();
-  };
+function lP(k){if(!profiles[k])return;active=k;setFD(profiles[k].data);rP();R();}
+function dP(k){delete profiles[k];try{localStorage.setItem('dp',JSON.stringify(profiles));}catch(e){}if(active===k){var f=Object.keys(profiles)[0];if(f)lP(f);}rP();}
+function rP(){
+  var bar=g('bar');bar.innerHTML='<span>Profils :</span>';
+  var ks=Object.keys(profiles);
+  for(var i=0;i<ks.length;i++){(function(k){
+    var p=profiles[k];var c=document.createElement('span');c.className='chip'+(k===active?' on':'');
+    c.textContent=p.label;c.onclick=function(){lP(k);};bar.appendChild(c);
+    var d=document.createElement('span');d.className='chip del';d.textContent='x';d.title='Supprimer';
+    d.onclick=function(e){e.stopPropagation();if(confirm('Supprimer "'+p.label+'" ?'))dP(k);};bar.appendChild(d);
+  })(ks[i]);}
+  var nb=document.createElement('span');nb.className='chip add';nb.textContent='+ Nouveau';
+  nb.onclick=function(){var cl=['fn','ln','ro','em','ph','mo','ad','we'];for(var i=0;i<cl.length;i++){if(g(cl[i]))g(cl[i]).value='';}photo='';g('pi').style.display='none';g('pp').style.display='';P('navy');};
   bar.appendChild(nb);
 }
-
-g('photo-input').addEventListener('change',function(){
-  const file=this.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    photoData=e.target.result;
-    g('photo-img').src=photoData;g('photo-img').style.display='block';
-    if(g('photo-placeholder'))g('photo-placeholder').style.display='none';
-    render();
-  };
-  reader.readAsDataURL(file);
-});
-
-(function init(){
-  const saved=localStorage.getItem('dina_profiles');
-  if(saved){try{profiles=JSON.parse(saved);}catch(e){profiles={};}}
-  if(Object.keys(profiles).length===0){
-    profiles['chloe_jacqueline']={label:'Chloé Jacqueline',data:getFormData()};
-    activeProfile='chloe_jacqueline';
-    localStorage.setItem('dina_profiles',JSON.stringify(profiles));
-  }else{
-    activeProfile=Object.keys(profiles)[0];
-    setFormData(profiles[activeProfile].data);
-  }
-  renderProfiles();render();
-})();
-</script>
+g('fi').addEventListener('change',function(){var file=this.files[0];if(!file)return;var r=new FileReader();r.onload=function(e){photo=e.target.result;g('pi').src=photo;g('pi').style.display='block';g('pp').style.display='none';R();};r.readAsDataURL(file);});
+(function(){
+  try{var s=localStorage.getItem('dp');if(s)profiles=JSON.parse(s);}catch(e){profiles={};}
+  if(!Object.keys(profiles).length){profiles['chloe_jacqueline']={label:'Chloe Jacqueline',data:getFD()};active='chloe_jacqueline';try{localStorage.setItem('dp',JSON.stringify(profiles));}catch(e){}}
+  else{active=Object.keys(profiles)[0];setFD(profiles[active].data);}
+  rP();R();
+})();</script>
 </body>
 </html>
